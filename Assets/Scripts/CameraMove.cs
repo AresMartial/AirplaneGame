@@ -12,7 +12,7 @@ public class CameraMove : MonoBehaviour
     void FixedUpdate()
     {
         Vector3 moveCamTo = objToFollow.position - objToFollow.forward * forward + objToFollow.up * up;
-        
+
         Camera.main.transform.position = Camera.main.transform.position * bias + moveCamTo * (1 - bias);
         Camera.main.transform.LookAt(objToFollow.position + transform.forward * lookForward);
     }

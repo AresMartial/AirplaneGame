@@ -9,7 +9,6 @@ public class UIHandler : MonoBehaviour
     private TextMesh bonusMessage;
     private TextMesh congratsMessage;
     [SerializeField] private Airplane airplane; 
-    // Start is called before the first frame update
     void Start()
     {
         messages = GetComponentsInChildren<TextMesh>();
@@ -28,13 +27,14 @@ public class UIHandler : MonoBehaviour
         }
 
     }
-
-    // Update is called once per frame
     void Update()
     {
         if (Airplane.bonusPicked)
         {
-            bonusMessage.gameObject.SetActive(true);
+            if (bonusMessage != null)
+            {
+                bonusMessage.gameObject.SetActive(true);
+            }
             Destroy(bonusMessage, 5f);
         }
         if (Airplane.landed)

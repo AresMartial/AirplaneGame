@@ -11,12 +11,11 @@ public class Airplane : MonoBehaviour
     [SerializeField] private float virage = 6.0f;
     [SerializeField] private GameObject prop;
     [SerializeField] private GameObject propBlured;
-    [SerializeField] private GameObject coordinates;
     [SerializeField] private GameObject runway;
     private Rigidbody r;
     private bool landing = false;
     private bool destroyed = false;
-    private float ms = 0f;
+    private float ms;
     public static bool engenOn = false;
     public static bool bonusPicked = false;
     public static bool landed = false;
@@ -75,16 +74,12 @@ public class Airplane : MonoBehaviour
             engenOn = false;
             landed = false;
         }
-        else
-        {
-            Cursor.visible = false;
-        }
-
     }
     void FixedUpdate()
     {
         if (!destroyed)
         {
+            Cursor.visible = false;
             float roll = Input.GetAxis("Mouse X") * Time.deltaTime;
             float pitch = Input.GetAxis("Mouse Y") * Time.deltaTime;
             if (engenOn)
@@ -102,15 +97,18 @@ public class Airplane : MonoBehaviour
                 r.AddRelativeTorque(Vector3.right * Mathf.Clamp(pitch, -0.1f, 0.1f) * pitchTorque * Time.deltaTime, ForceMode.Force);
 
 
-                //Vector3 projection = Vector3.Project(gameObject.transform.up, gameObject.transform.right);
-                if (projection.x < 0)
-                {
-                    r.AddTorque(Vector3.down * Vector3.Angle(gameObject.transform.up, Vector3.up) * projection.sqrMagnitude * virage * Time.deltaTime, ForceMode.Force);
-                }
-                else
-                {
-                    r.AddTorque(Vector3.up * Vector3.Angle(gameObject.transform.up, Vector3.up) * projection.sqrMagnitude * virage * Time.deltaTime, ForceMode.Force);
-                }
+                var projection = -gameObject.transform.InverseTransformDirection(Vector3.up);
+                //if (projection.x < 0)
+                //{
+
+                //    r.AddRelativeTorque(-gameObject.transform.up * projection.x * limitMS * virage * Time.deltaTime, ForceMode.Force);
+                //}
+                //else 
+                //{
+                //    r.AddRelativeTorque(-gameObject.transform.up * projection.x * limitMS * virage * Time.deltaTime, ForceMode.Force);
+                //}
+
+                r.AddTorque(0, projection.x * limitMS * virage * Time.deltaTime, 0, ForceMode.Force);
 
                 if (bonusPicked)
                 {
@@ -144,8 +142,9 @@ public class Airplane : MonoBehaviour
         }
         else
         {
-            FinishLine.LoadNextScene();
             Cursor.visible = true;
+            FinishLine.LoadNextScene();
+            bonusPicked = false;
             engenOn = false;
             landed = false;
         }
